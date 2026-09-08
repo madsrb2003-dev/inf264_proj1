@@ -7,7 +7,9 @@ class DecisionTree:
         self.max_depth = max_depth
         self.root = None
 
-    def fit(self, X, y):
+
+
+    def fit(self, X, y, depth=0):
 
         # Step 1: Check if all labels are the same
         if identical_labels(y):
@@ -15,36 +17,49 @@ class DecisionTree:
 
         
         # Step 2: Check if all datapoints have the same features
-        if identical_features(X):
+        elif identical_features(X) or (self.max_depth is not None and depth >= self.max_depth):
             most_common_label = np.bincount(y).argmax()
 
             return most_common_label
 
 
         # Step 3: Calculate information gain
+        else: 
+            feature_gains = []
+            label_entropy = decision_entropy(y)
 
-        feature_gains = []
-        label_entropy = decision_entropy(y)
+            for feature in X.T:
+                if np.all(feature == feature[0]):
+                    feature_gains.append(-np.inf)
+                information_gain = label_entropy - conditional_entropy(feature, y)
 
-        for feature in X.T:
-            information_gain = label_entropy - conditional_entropy(feature, y)
+                feature_gains.append(information_gain)
 
-            feature_gains.append(information_gain)
 
-        split_feature = np.argmax(information_gain)
-        column = X[:, split_feature]
-        threshold = np.mean(column)
+        # Split the branch
+            split_feature = np.argmax(feature_gains)
+            column = X[:, split_feature]
+            threshold = np.mean(column)
 
-        low_mask = column <= threshold
-        high_mask = ~low_mask
+            low_mask = column <= threshold
+            high_mask = ~low_mask
 
-        X_low = X[low_mask]
-        X_high = X[high_mask]
-        y_low = y[low_mask]
-        y_high = y[high_mask]
+            X_low = X[low_mask]
+            X_high = X[high_mask]
+            y_low = y[low_mask]
+            y_high = y[high_mask]
 
-        self.fit(X_low, y_low)
-        self.fit(X_high, y_high)
+            node =  {
+                "feature": split_feature,
+                "threshold": threshold,
+                "left": self.fit(X_low, y_low, depth + 1),
+                "right": self.fit(X_high, y_high, depth + 1)
+            }
+
+        if depth == 0:
+            self.root = node
+
+        return node
 
         
 
@@ -69,6 +84,9 @@ def decision_entropy(column):
 
 
     sum = count_low + count_high
+
+    if count_low == len(column):
+        return 0
 
     decision_zero = (count_low/(sum)) * math.log2(count_low/(sum))
     decision_one = (count_high/sum) * math.log2(count_high/sum)
