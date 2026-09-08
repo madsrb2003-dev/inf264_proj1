@@ -23,7 +23,13 @@ class DecisionTree:
 
         # Step 3: Calculate information gain
 
-        
+        feature_gains = []
+        label_entropy = decision_entropy(y)
+
+        for feature in X.T:
+            information_gain = label_entropy - conditional_entropy(feature, y)
+
+            feature_gains.append(information_gain)
 
 
     def predict(self, X):
@@ -40,7 +46,7 @@ def decision_entropy(column):
     count_low = 0
     count_high = 0
 
-    for label in y:
+    for label in column:
         if label <= threshold:
             count_low += 1
         else: count_high += 1
@@ -56,10 +62,30 @@ def decision_entropy(column):
     return entropy
 
 
-def conditional_entropy(X, y):
-    feature_entropy = []
+def conditional_entropy(feature, y):
+
+    threshold = np.mean(feature)
+
+    count_low = 0
+    count_high = 0
+    label_low = []
+    label_high = []
+
+    for index, value in enumerate(feature):
+        if value <= threshold:
+            count_low += 1
+            label_low.append(int(y[index]))
+
+        else: 
+            count_high += 1
+            label_high.append(int(y[index]))
+
+    sum = count_low + count_high
+
     
-    return feature_entropy
+    entropy = count_low/sum * decision_entropy(label_low) + count_high/sum * decision_entropy(label_high)
+    
+    return entropy
 
 
 def identical_labels(y):
