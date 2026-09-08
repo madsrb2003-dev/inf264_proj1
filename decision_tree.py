@@ -31,6 +31,22 @@ class DecisionTree:
 
             feature_gains.append(information_gain)
 
+        split_feature = np.argmax(information_gain)
+        column = X[:, split_feature]
+        threshold = np.mean(column)
+
+        low_mask = column <= threshold
+        high_mask = ~low_mask
+
+        X_low = X[low_mask]
+        X_high = X[high_mask]
+        y_low = y[low_mask]
+        y_high = y[high_mask]
+
+        self.fit(X_low, y_low)
+        self.fit(X_high, y_high)
+
+        
 
     def predict(self, X):
         # IMPLEMENT
