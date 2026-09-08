@@ -34,14 +34,32 @@ class DecisionTree:
 
 # Helper methods 
 
-def decision_entropy(y):
-    counts = np.bincount(y)
-    decision_zero = (counts[0]/np.sum(counts)) * math.log2(counts[0]/np.sum(counts))
-    decision_one = (counts[1]/np.sum(counts)) * math.log2(counts[1]/np.sum(counts))
+def decision_entropy(column):
+    
+    threshold = np.mean(column)
+    count_low = 0
+    count_high = 0
+
+    for label in y:
+        if label <= threshold:
+            count_low += 1
+        else: count_high += 1
+
+
+    sum = count_low + count_high
+
+    decision_zero = (count_low/(sum)) * math.log2(count_low/(sum))
+    decision_one = (count_high/sum) * math.log2(count_high/sum)
 
     entropy = -(decision_zero + decision_one)
 
     return entropy
+
+
+def conditional_entropy(X, y):
+    feature_entropy = []
+    
+    return feature_entropy
 
 
 def identical_labels(y):
