@@ -10,6 +10,7 @@ class DecisionTree:
 
     # Made by Chat
     def print_tree(self, node, feature_names, indent=""):
+        print(self.criterion)
         if not isinstance(node, dict):
             print(f"{indent}Predict: {node}")
             return
@@ -41,14 +42,24 @@ class DecisionTree:
 
         # Step 3: Calculate information gain
         else: 
+
+            if self.criterion == "entropy":
+                parent_impurity = decision_entropy(y)
+                
+            elif self.criterion == "gini":
+                parent_impurity = gini(y)
+            else: 
+                raise ValueError("criterion must be entropy or gini")
+
+
             feature_gains = []
-            label_entropy = decision_entropy(y)
 
             for feature in X.T:
                 if np.all(feature == feature[0]):
                     feature_gains.append(-np.inf)
                     continue
-                information_gain = label_entropy - conditional_entropy(feature, y)
+
+                information_gain = parent_impurity - conditional_impurity(feature, y, self.criterion)
 
                 feature_gains.append(information_gain)
 
@@ -131,8 +142,31 @@ def decision_entropy(column):
 
     return entropy
 
+def gini(column):
+    threshold = np.mean(column)
+    count_low = 0
+    count_high = 0
 
-def conditional_entropy(feature, y):
+    for label in column:
+        if label <= threshold:
+            count_low += 1
+        else: count_high += 1
+
+
+    sum = count_low + count_high
+
+    if count_low == len(column):
+        return 0
+
+    prob_zero = count_low/sum
+    prob_one = count_high/sum
+
+    G_x = (prob_zero*(1-prob_zero) + prob_one*(1-prob_one))
+
+    return G_x
+
+
+def conditional_impurity(feature, y, criterion):
 
     threshold = np.mean(feature)
 
@@ -152,10 +186,17 @@ def conditional_entropy(feature, y):
 
     sum = count_low + count_high
 
+    if criterion == "entropy":
+        gain = count_low/sum * decision_entropy(label_low) + count_high/sum * decision_entropy(label_high)
+
+    elif criterion == "gini": 
+        gain =  count_low/sum * gini(label_low) + count_high/sum * gini(label_high)
+
+    else:
+        raise ValueError("Criterion must be entropy or gini")
+
     
-    entropy = count_low/sum * decision_entropy(label_low) + count_high/sum * decision_entropy(label_high)
-    
-    return entropy
+    return gain
 
 
 def identical_labels(y):
