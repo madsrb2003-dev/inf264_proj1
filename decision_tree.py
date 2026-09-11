@@ -10,7 +10,7 @@ class DecisionTree:
 
     # Made by Chat
     def print_tree(self, node, feature_names, indent=""):
-        print(self.criterion)
+
         if not isinstance(node, dict):
             print(f"{indent}Predict: {node}")
             return
@@ -30,14 +30,12 @@ class DecisionTree:
 
         # Step 1: Check if all labels are the same
         if identical_labels(y):
-            return y[0]
+            node = y[0]
 
         
         # Step 2: Check if all datapoints have the same features
         elif identical_features(X) or (self.max_depth is not None and depth >= self.max_depth):
-            most_common_label = np.bincount(y).argmax()
-
-            return most_common_label
+            node = np.bincount(y).argmax()
 
 
         # Step 3: Calculate information gain
@@ -65,6 +63,7 @@ class DecisionTree:
 
 
         # Split the branch
+            
             split_feature = np.argmax(feature_gains)
             column = X[:, split_feature]
             threshold = np.mean(column)
