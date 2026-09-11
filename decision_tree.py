@@ -8,6 +8,7 @@ class DecisionTree:
         self.root = None
 
 
+    # Made by Chat
     def print_tree(self, node, feature_names, indent=""):
         if not isinstance(node, dict):
             print(f"{indent}Predict: {node}")
@@ -80,8 +81,26 @@ class DecisionTree:
         
 
     def predict(self, X):
-        # IMPLEMENT
-        pass
+
+        # Beginning of the tree
+        node = self.root
+        predicted_labels = []
+
+        for row in X: 
+        
+            while isinstance(node, dict):
+                feature = node["feature"]
+                threshold = node["threshold"]
+
+                if row[feature] <= threshold:
+                    node = node["left"]
+
+                else:
+                    node = node["right"]
+
+            predicted_labels.append[node]
+
+        return predicted_labels
 
 
 
