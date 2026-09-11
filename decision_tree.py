@@ -8,6 +8,21 @@ class DecisionTree:
         self.root = None
 
 
+    def print_tree(self, node, feature_names, indent=""):
+        if not isinstance(node, dict):
+            print(f"{indent}Predict: {node}")
+            return
+
+        name = feature_names[node["feature"]]
+        print(f"{indent}{name} <= {node['threshold']:.3f}")
+
+        print(f"{indent}  Yes:")
+        self.print_tree(node["left"], feature_names, indent + "    ")
+
+        print(f"{indent}  No:")
+        self.print_tree(node["right"], feature_names, indent + "    ")
+
+
 
     def fit(self, X, y, depth=0):
 
@@ -31,6 +46,7 @@ class DecisionTree:
             for feature in X.T:
                 if np.all(feature == feature[0]):
                     feature_gains.append(-np.inf)
+                    continue
                 information_gain = label_entropy - conditional_entropy(feature, y)
 
                 feature_gains.append(information_gain)
