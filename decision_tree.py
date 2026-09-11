@@ -82,12 +82,12 @@ class DecisionTree:
 
     def predict(self, X):
 
-        # Beginning of the tree
-        node = self.root
         predicted_labels = []
 
         for row in X: 
-        
+            
+            node = self.root
+
             while isinstance(node, dict):
                 feature = node["feature"]
                 threshold = node["threshold"]
@@ -98,7 +98,8 @@ class DecisionTree:
                 else:
                     node = node["right"]
 
-            predicted_labels.append[node]
+            predicted_labels.append(node)
+            
 
         return predicted_labels
 
