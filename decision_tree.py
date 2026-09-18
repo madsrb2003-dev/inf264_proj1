@@ -128,13 +128,13 @@ def decision_entropy(labels):
     return -np.sum(probs * np.log2(probs))
 
 def gini(labels):
-    
+
     if len(labels) == 0:
         return 0.0
 
     _, counts = np.unique(labels, return_counts=True)
     probs = counts / len(labels)
-    return 1 - np.sum(probs * (1 - probs))
+    return np.sum(probs * (1 - probs))
 
 
 def conditional_impurity(feature, y, criterion):
