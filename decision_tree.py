@@ -192,7 +192,27 @@ def identical_features(X):
 
 
 def permutation_importance(model, X, y, metric, n_repeats, seed):
-    ...
+    np.random.seed(seed)
+
+    baseline_predictions = model.predict(X)
+    baseline_score = metric(y, baseline_predictions)
+
+    importances = []
+    n_features = X.shape[1]
+
+    for feature_index in range(n_features):
+        scores = []
+
+        for repeat in range(n_repeats):
+            X_permuted = X.copy()
+            X_permuted[:, feature_index] = np.random.permutation(X_permuted[:, feature_index])
+           
+            score = metric(y, model.predict(X_permuted))
+            scores.append(score)
+
+        importance = baseline_score - np.mean(scores)
+        importances.append(importance)
+
+    return importances
 
 
-    
