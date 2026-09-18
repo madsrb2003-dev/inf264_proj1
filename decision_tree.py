@@ -117,52 +117,24 @@ class DecisionTree:
 
 # Helper methods 
 
-def decision_entropy(column):
+def decision_entropy(labels):
+
+    if len(labels) == 0:
+        return 0.0
+
+    _, counts = np.unique(labels, return_counts=True)
+    probs = counts / len(labels)
     
-    threshold = np.mean(column)
-    count_low = 0
-    count_high = 0
+    return -np.sum(probs * np.log2(probs))
 
-    for label in column:
-        if label <= threshold:
-            count_low += 1
-        else: count_high += 1
+def gini(labels):
+    
+    if len(labels) == 0:
+        return 0.0
 
-
-    sum = count_low + count_high
-
-    if count_low == len(column):
-        return 0
-
-    decision_zero = (count_low/(sum)) * math.log2(count_low/(sum))
-    decision_one = (count_high/sum) * math.log2(count_high/sum)
-
-    entropy = -(decision_zero + decision_one)
-
-    return entropy
-
-def gini(column):
-    threshold = np.mean(column)
-    count_low = 0
-    count_high = 0
-
-    for label in column:
-        if label <= threshold:
-            count_low += 1
-        else: count_high += 1
-
-
-    sum = count_low + count_high
-
-    if count_low == len(column):
-        return 0
-
-    prob_zero = count_low/sum
-    prob_one = count_high/sum
-
-    G_x = (prob_zero*(1-prob_zero) + prob_one*(1-prob_one))
-
-    return G_x
+    _, counts = np.unique(labels, return_counts=True)
+    probs = counts / len(labels)
+    return 1 - np.sum(probs * (1 - probs))
 
 
 def conditional_impurity(feature, y, criterion):
