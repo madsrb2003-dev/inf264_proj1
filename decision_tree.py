@@ -189,3 +189,10 @@ def identical_features(X):
                 return False
 
     return True
+
+
+def permutation_importance(model, X, y, metric, n_repeats, seed):
+    ...
+
+
+    
