@@ -2,10 +2,9 @@ import numpy as np
 import math
 
 class DecisionTree: 
-    def __init__(self, criterion, max_depth, root):
+    def __init__(self, criterion = "entropy", max_depth  = None):
         self.criterion = criterion
         self.max_depth = max_depth
-        self.root = None
 
 
     # Made by Chat
