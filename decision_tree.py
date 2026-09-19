@@ -1,5 +1,4 @@
 import numpy as np
-import math
 
 class DecisionTree: 
     def __init__(self, criterion = "entropy", max_depth = None):
