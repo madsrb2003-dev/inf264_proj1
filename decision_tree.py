@@ -154,19 +154,19 @@ def conditional_impurity(feature, y, criterion):
             count_high += 1
             label_high.append(int(y[index]))
 
-    sum = count_low + count_high
+    total = count_low + count_high
 
     if criterion == "entropy":
-        gain = count_low/sum * decision_entropy(label_low) + count_high/sum * decision_entropy(label_high)
+        impurity = count_low/total * decision_entropy(label_low) + count_high/total * decision_entropy(label_high)
 
     elif criterion == "gini": 
-        gain =  count_low/sum * gini(label_low) + count_high/sum * gini(label_high)
+        impurity = count_low/total * gini(label_low) + count_high/total * gini(label_high)
 
     else:
         raise ValueError("Criterion must be entropy or gini")
 
     
-    return gain
+    return impurity
 
 
 def identical_labels(y):
